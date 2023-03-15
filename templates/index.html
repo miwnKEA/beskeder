@@ -1,0 +1,182 @@
+<!-- create html page -->
+
+<html>
+<head>
+<title>Sende beskeder over netværket med Flask og Sense HAT</title>
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        text-align: left;
+    }
+
+    th,
+    td {
+        min-width: 200px;
+        padding: 10px;
+    }
+</style>
+</head>
+<body>
+<h1>Sende beskeder over netværket med Flask og Sense HAT</h1>
+
+<p><b>Hosts</b></p>
+<!-- show hosts in a table -->
+<table>
+    <tr>
+        <th>Hostname / IP</th>
+        <th>Port number</th>
+    </tr>
+    {% for h in hosts['hosts'] %}
+    <tr>
+        <td>{{ h[1] }}</td>
+        <td>{{ h[2] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<br />
+
+<p><b>Add host</b></p>
+<form action="/add_host" method="post">
+    <label for="hostname">Hostname:</label>
+    <input type="text" name="hostname" id="hostname" required>
+    <br />
+    <br />
+    <label for="port">Port number:</label>
+    <input type="text" name="port" id="port" required>
+    <br />
+    <br />
+    <input type="submit" value="Submit">
+</form>
+<br />
+
+<p><b>Send message</b></p>
+<form action="/send_message" method="post">
+    <label for="author">Author:</label>
+    <input type="text" name="author" id="author" required>
+    <br />
+    <br />
+    <label for="message">Message:</label>
+    <input type="text" name="message" id="message" required>
+    <br />
+    <br />
+    <label for="color">Color (between 0 and 255):</label>
+    <input type="number" name="color1" id="color1" min="0" max="255" value="0">
+    <input type="number" name="color2" id="color2" min="0" max="255" value="0">
+    <input type="number" name="color3" id="color3" min="0" max="255" value="0">
+    <br />
+    <br />
+    <label for="host">Select hostname:</label>
+    <select name="host" id="host">
+    {% for h in hosts['hosts'] %}
+    <option value="{{ h[1] }}:{{ h[2] }}">{{ h[1] }}:{{ h[2] }}</option>
+    {% endfor %}
+    </select>
+    <br />
+    <br />
+    <input type="submit" value="Submit">
+</form>
+<br />
+
+<!-- create form to send heart with color -->
+<p><b>Send heart</b></p>
+<form action="/send_heart" method="post">
+    <label for="color">Color (between 0 and 255):</label>
+    <input type="number" name="color1" id="color1" min="0" max="255" value="0">
+    <input type="number" name="color2" id="color2" min="0" max="255" value="0">
+    <input type="number" name="color3" id="color3" min="0" max="255" value="0">
+    <br />
+    <br />
+    <label for="host">Select hostname:</label>
+    <select name="host" id="host">
+    {% for h in hosts['hosts'] %}
+    <option value="{{ h[1] }}:{{ h[2] }}">{{ h[1] }}:{{ h[2] }}</option>
+    {% endfor %}
+    </select>
+    <br />
+    <br />
+    <input type="submit" value="Submit">
+</form>
+<br />
+
+<!-- create form to send smiley with sad or happy mood and color -->
+<p><b>Send smiley</b></p>
+<form action="/send_smiley" method="post">
+    <label for="mood">Mood:</label>
+    <select name="mood" id="mood">
+    <option value="happy">Happy</option>
+    <option value="sad">Sad</option>
+    </select>
+    <br />
+    <br />
+    <label for="color">Color (between 0 and 255):</label>
+    <input type="number" name="color1" id="color1" min="0" max="255" value="0">
+    <input type="number" name="color2" id="color2" min="0" max="255" value="0">
+    <input type="number" name="color3" id="color3" min="0" max="255" value="0">
+    <br />
+    <br />
+    <label for="host">Select hostname:</label>
+    <select name="host" id="host">
+    {% for h in hosts['hosts'] %}
+    <option value="{{ h[1] }}:{{ h[2] }}">{{ h[1] }}:{{ h[2] }}</option>
+    {% endfor %}
+    </select>
+    <br />
+    <br />
+    <input type="submit" value="Submit">
+</form>
+<br />
+
+<p><b>Clear</b></p>
+<form action="/set_clear" method="post">
+    <label for="host">Select hostname:</label>
+    <select name="host" id="host">
+    {% for h in hosts['hosts'] %}
+    <option value="{{ h[1] }}:{{ h[2] }}">{{ h[1] }}:{{ h[2] }}</option>
+    {% endfor %}
+    </select>
+    <br />
+    <br />
+    <input type="submit" value="Submit">
+</form>
+<br />
+
+<p><b>Messages</b></p>
+<!-- loop to show all messages -->
+<ul>
+{% for m in messages['messages'] %}
+<li>
+    <p>{{ m[3] }} ({{ m[2] }}): {{ m[1] }}</p>
+</li>
+{% endfor %}
+</ul>
+<br />
+
+
+<p><b>cURL requests</b></p>
+
+<p>curl -X GET {{ url }}/get_messages</p>
+
+<p>curl -X POST {{ url }}/set_message -H 'Content-Type: application/json' -d '{"message": "Hvordan går det?", "color": [255, 0, 255], "author": "Mikkel"}'</p>
+
+<p>curl -X UPDATE {{ url }}/update_message -H 'Content-Type: application/json' -d '{"id": 6, "message": "Opdateret"}'</p>
+
+<p>curl -X DELETE {{ url }}/delete_message -H 'Content-Type: application/json' -d '{"id": 3}'</p>
+
+<p>curl -X POST {{ url }}/set_heart -H 'Content-Type: application/json' -d '{"color": [255, 0, 0]}'</p>
+
+<p>curl -X POST {{ url }}/set_smiley -H 'Content-Type: application/json' -d '{"color": [255, 0, 255], "mood": "happy"}'</p>
+
+<p>curl -X POST {{ url }}/set_smiley -H 'Content-Type: application/json' -d '{"color": [255, 0, 255], "mood": "sad"}'</p>
+
+<p>curl -X POST {{ url }}/clear</p>
+
+<br />
+
+</body>
+</html>
