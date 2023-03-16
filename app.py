@@ -165,6 +165,16 @@ def add_host():
         # return json response with OK status
         return redirect('/')
 
+# delete host from database
+@app.route('/delete_host', methods=['POST'])
+def delete_host():
+    if request.method == 'POST':
+        id = request.form['id']
+        with sqlite3.connect('messages.db') as connection:
+            c = connection.cursor()
+            c.execute('DELETE FROM hosts WHERE id=?', (id,))
+        return redirect('/')
+
 # create post route to send message to pi4
 @app.route('/send_message', methods=['POST'])
 def send_message():
@@ -208,16 +218,3 @@ def clear_host():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
-
-# curl -X GET http://192.168.1.17:5000/get_messages
-
-# curl -X POST http://192.168.1.17:5000/set_message -H 'Content-Type: application/json' -d '{"message": "Hvordan går det?", "color": [255, 0, 255], "author": "Mikkel"}'
-
-# curl -X DELETE http://192.168.1.17:5000/delete_message -H 'Content-Type: application/json' -d '{"id": 5}'
-
-# curl -X POST http://192.168.1.17:5000/set_heart -H 'Content-Type: application/json' -d '{"color": [255, 0, 0]}'
-
-# curl -X POST http://192.168.1.17:5000/set_smiley -H 'Content-Type: application/json' -d '{"color": [255, 0, 255], "mood": "happy"}'
-# curl -X POST http://192.168.1.17:5000/set_smiley -H 'Content-Type: application/json' -d '{"color": [255, 0, 255], "mood": "sad"}'
-
-# curl -X POST http://192.168.1.17:5000/clear
