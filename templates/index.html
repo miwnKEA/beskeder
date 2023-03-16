@@ -28,11 +28,20 @@
     <tr>
         <th>Hostname / IP</th>
         <th>Port number</th>
+        <th>Remove</th>
     </tr>
     {% for h in hosts['hosts'] %}
     <tr>
         <td>{{ h[1] }}</td>
         <td>{{ h[2] }}</td>
+        
+        <!-- button to delete -->
+        <td>
+            <form action="/delete_host" method="post" style="margin-block-end: 0em!important;">
+                <input type="hidden" name="id" value="{{ h[0] }}">
+                <input type="submit" value="Click">
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>
